@@ -4,6 +4,7 @@ package com.yyc.learnfastjson.util;
  * @Date 8/23/2022 5:44 PM
  */
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,8 +37,10 @@ public class DateUtil {
 
     public static List<String> findDates(String dateType, Date dBegin, Date dEnd) throws Exception {
         List<String> listDate = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar calBegin = Calendar.getInstance();
         calBegin.setTime(dBegin);
+        listDate.add(sdf.format(calBegin.getTime()));
         Calendar calEnd = Calendar.getInstance();
         calEnd.setTime(dEnd);
         while (calEnd.after(calBegin)) {
@@ -51,16 +54,37 @@ public class DateUtil {
                 case "H":
                     calBegin.add(Calendar.HOUR, 1);
                     break;
-                case "N":
-                    calBegin.add(Calendar.SECOND, 1);
+                default:
                     break;
             }
             if (calEnd.after(calBegin)) {
-                listDate.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calBegin.getTime()));
+                listDate.add(sdf.format(calBegin.getTime()));
             } else {
-                listDate.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calEnd.getTime()));
+                listDate.add(sdf.format(calEnd.getTime()));
             }
         }
         return listDate;
     }
+
+    /**
+     * description 通过入参时间得到往后推一天的时间来按天切片
+     * @param str 代表需要增加一天的时间
+     * @return
+     */
+    public static String addDayForData(String str) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date dBegin;
+        try {
+            dBegin = sdf.parse(str);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        Calendar calBegin = Calendar.getInstance();
+        calBegin.setTime(dBegin);
+//        calBegin.add(Calendar.DAY_OF_YEAR, 1);
+        String result = sdf.format(calBegin.getTime());
+//        System.out.println(result);
+        return result;
+    }
+
 }
